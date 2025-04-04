@@ -103,6 +103,12 @@ async function run() {
       const result = await plantsCollection.insertOne(plant);
       res.send(result);
     });
+
+    // get all plants from the database
+    app.get('/plants', async (req, res) => {
+      const result = await plantsCollection.find().limit(20).toArray();
+      res.send(result);
+    });
     // Send a ping to confirm a successful connection
     await client.db('admin').command({ ping: 1 });
     console.log('Pinged your deployment. You successfully connected to MongoDB!');
