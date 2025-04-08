@@ -51,6 +51,7 @@ async function run() {
     const db = client.db('plantNet');
     const usersCollection = db.collection('users');
     const plantsCollection = db.collection('plants');
+    const orderInfoCollection = db.collection('orders');
     // save or update user in the database
     app.post('/users/:email', async (req, res) => {
       const email = req.params.email;
@@ -109,6 +110,24 @@ async function run() {
       const result = await plantsCollection.find().limit(20).toArray();
       res.send(result);
     });
+
+    // get a single plant from the database
+    app.get('/plants/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await plantsCollection.findOne(query);
+      res.send(result);
+    });
+
+    // save order data to the database
+    app.post('/order', verifyToken, async (req, res) => {
+      const orderInfo = req.body;
+      const result = await orderInfoCollection.insertOne(orderInfo);
+      res.send(result);
+    });
+
+    // Manage plant quantity after order or cencel order
+
     // Send a ping to confirm a successful connection
     await client.db('admin').command({ ping: 1 });
     console.log('Pinged your deployment. You successfully connected to MongoDB!');
